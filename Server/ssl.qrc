@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/certificados">
+        <file>sslserver.key</file>
+        <file>sslserver.pem</file>
+    </qresource>
+</RCC>
