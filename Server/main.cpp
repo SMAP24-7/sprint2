@@ -7,6 +7,7 @@
 #include <sys/types.h>
 #include <pwd.h>
 #include <grp.h>
+#include "server_connection.h"
 
 static int setup_unix_signal_handlers()
 {
@@ -39,7 +40,7 @@ void init_daemon(QStringList *l){
     }
 
     hijo = fork();
-    printf("%u", hijo);
+    printf("%u\n", hijo);
 
     if(hijo < 0){
         //printf("El proceso ha fallado\n");
@@ -85,8 +86,8 @@ void init_daemon(QStringList *l){
 //    int fd2 = open("/dev/null", O_WRONLY);
 
     // Ahora cambiaremos el grupo y el usuario a otro.
-    passwd* user = getpwnam("jorge");
-    group* group = getgrnam("jorge");
+    passwd* user = getpwnam("manu");
+    group* group = getgrnam("manu");
 
     if(user == nullptr or group == nullptr)
         exit(13);
@@ -107,17 +108,22 @@ int main(int argc, char *argv[])
     for (int q = 1 ; q < argc ; q++)
          list.push_back(argv[q]);
 
-    QApplication a(argc, argv);
-    Server w(0, & list);
+    //Server w(0, &list)
 
-//    if(list.contains("-d") or list.contains("--daemon")){
-//        init_daemon(&list);
-//        w.startServerAsDaemon();
-//    }else{
-//         w.show();
-//    }
-    //init_daemon(&list);
-    //w.startServerAsDaemon();
-    w.show();
-    return a.exec();
+    if(list.contains("-d") or list.contains("--daemon")){
+        init_daemon(&list);
+
+        QCoreApplication a(argc, argv);
+        bool ssl = false;
+        Server_Connection w(QHostAddress("127.0.0.1"), 30000, "/home/manu/Música", ssl);
+        w.start();
+
+        return a.exec();
+    }else{
+        QApplication a(argc, argv);
+        Server w(0, &list);
+        w.show();
+
+        return a.exec();
+    }
 }

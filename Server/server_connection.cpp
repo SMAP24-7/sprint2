@@ -81,7 +81,7 @@ void Server_Connection::incomingConnection(qintptr socketDescriptor){
 void Server_Connection::Finished_Conection(){
     qDebug()<<"Server_Connection";
     log((QString)"Servidor desconectado");
-    //emit on_Finished_Conection();
+    emit on_Finished_Conection();
     Interval.stop();
 }
 
